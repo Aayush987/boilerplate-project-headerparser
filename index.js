@@ -6,12 +6,27 @@ require('dotenv').config();
 var express = require('express');
 var app = express();
 var {ip} = require('address');
+var cron = require('node-cron');
+var axios = require('axios');
 
 var cors = require('cors');
 app.use(cors({ optionsSuccessStatus: 200 })); // some legacy browsers choke on 204
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
+
+cron.schedule('*/10 * * * *', () => {
+  axios.get('https://headerparser-api.onrender.com/')
+     .then(resonse => {
+       console.log('Server Pinged successfully');
+     })
+     .catch(error => {
+       console.log(error);
+     });
+})
+
+
+
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get('/', function (req, res) {
